@@ -30,7 +30,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       router.push("/admin/dashboard");
       console.log("Admin login successful");
     } catch (err: any) {
-      console.error("Admin login failed", err);
+      attemptProfessorLogin({ email, password });
+    }
+  };
+
+  const attemptProfessorLogin = async (credentials: { email: string; password: string }) => {
+    try {
+      const res2 = await api.post("/api/professor-login", credentials);
+      login(res2.data.admin_info, res2.data.token);
+      router.push("/professor/dashboard");
+      console.log("Professor login successful");
+    } catch (err: any) {
+      console.error("login failed", err);
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {

@@ -7,8 +7,11 @@ import { Users, BookOpen, UserPlus, Settings } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import AddProfessorDialog from "@/components/admin/add-prof"
+import { useRouter } from "next/navigation"
 
 export default function AdminDashboard() {
+  const router = useRouter()
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -18,35 +21,10 @@ export default function AdminDashboard() {
           <p className="text-muted-foreground">School Administration Portal</p>
         </div>
         <div className="flex gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Add Professor
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="space-y-4 bg-background border-border">
-              <DialogHeader>
-                <DialogTitle>Add Professor</DialogTitle>
-                <DialogDescription className="text-muted-foreground">
-                  Fill out the form below to add a new professor to the system.
-                </DialogDescription>
-              </DialogHeader>
-              <form className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" type="text" placeholder="John Doe" className="bg-card text-card-foreground border-input" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="john.doe@example.com" className="bg-card text-card-foreground border-input" />
-                </div>
-                <DialogFooter className="pt-4">
-                  <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">Add</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <AddProfessorDialog />
+          <Button onClick={() => router.refresh()}>
+      Refresh Data
+    </Button>
         </div>
       </div>
 

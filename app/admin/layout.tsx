@@ -37,7 +37,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
   
       const verifyUser = async () => {
         try {
-          const res = await api.get("/api/verify-user", { //RETURN THE IMAGE PATH IF EXIST AH
+          const res = await api.get("/api/verify-admin", { //RETURN THE IMAGE PATH IF EXIST AH
             headers: { Authorization: `Bearer ${token}` }
           });
           

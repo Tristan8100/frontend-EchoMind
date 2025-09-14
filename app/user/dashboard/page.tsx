@@ -9,7 +9,7 @@ export default function StudentClassrooms() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
         <div className="md:w-1/2">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Professor Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Student Dashboard</h1>
           <p className="text-muted-foreground mt-2 md:mt-4">
            Manage your enrolled subjects and join new ones
           </p>
