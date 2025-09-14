@@ -11,16 +11,18 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+import Link from "next/link"
+
 // Simple navigation for students
 const studentNav = [
   {
     title: "Dashboard",
-    url: "/student",
+    url: "/professor/dashboard",
     icon: Home,
   },
   {
     title: "My Classrooms",
-    url: "/student/classrooms",
+    url: "/professor/classrooms",
     icon: BookOpen,
   },
   {
@@ -71,12 +73,12 @@ export function ProfAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar
                     asChild 
                     className="h-11 px-3 hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-lg group"
                   >
-                    <a href={item.url} className="font-medium flex items-center gap-3">
+                    <Link href={item.url} className="font-medium flex items-center gap-3">
                       <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted/50 group-hover:bg-primary/10 transition-colors">
                         <Icon className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
                       <span className="text-sm">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )

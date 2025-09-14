@@ -28,22 +28,10 @@ import {
 import { Users, MessageSquare, Plus, Search, Settings, Eye, BarChart3, Copy, Calendar, Clock } from "lucide-react"
 import { useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
+import { CreateClassroomDialog } from "@/components/professor/add-classroom"
 
 
 export default function ProfessorDashboard() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [formData, setFormData] = useState({
-    name: "",
-    code: "",
-    description: "",
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Creating classroom:", formData)
-    setIsDialogOpen(false)
-    setFormData({ name: "", code: "", description: "" })
-  }
 
   // Mock data for professor dashboard
   const stats = {
@@ -124,63 +112,7 @@ export default function ProfessorDashboard() {
             Welcome back! Here's an overview of your teaching performance and student feedback.
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
-              <Plus className="h-4 w-4" />
-              Create New Classroom
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] bg-card border-border">
-            <DialogHeader>
-              <DialogTitle>Create New Classroom</DialogTitle>
-              <DialogDescription className="text-muted-foreground">Set up a new classroom for your students to join and evaluate.</DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Classroom Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g., Advanced Mathematics"
-                    required
-                    className="bg-background text-foreground border-input"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="code">Course Code</Label>
-                  <Input
-                    id="code"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    placeholder="e.g., MATH401"
-                    required
-                    className="bg-background text-foreground border-input"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Brief description of the course"
-                    rows={3}
-                    className="bg-background text-foreground border-input"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="bg-muted text-muted-foreground hover:bg-muted/90 border-border">
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">Create Classroom</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <CreateClassroomDialog onSuccess={() => console.log("Classroom created!")} />
       </div>
 
       {/* Stats Cards */}

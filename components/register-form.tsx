@@ -16,31 +16,36 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState('');
+  const [studentNumber, setStudentNumber] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
   const registerMutation = useMutation({
-    mutationFn: (credentials: { email: string; password: string; name: string }) => 
+    mutationFn: (credentials: { name: string; student_number: string; password: string }) =>
       api.post('/api/register', credentials).then(res => res.data),
     onSuccess: (data) => {
       console.log('Registration successful:', data);
-      localStorage.setItem('email', email);
-      router.push('/auth/verify-email'); // change this ah
+
+      // Save email (from laravel) with domain name
+      if (data.email) {
+        localStorage.setItem('email', data.email);
+      }
+
+      // Redirect to verification step
+      router.push('/auth/verify-otp');
     },
     onError: (error: any) => {
       console.log('Registration failed:', error);
       if (error.response && error.response.data) {
         const message = error.response.data.message || 
-                       error.response.data.errors?.email?.[0] || 
+                       error.response.data.errors?.student_number?.[0] || 
                        "Registration failed";
         setError(message);
       } else {
@@ -51,7 +56,7 @@ export function RegisterForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    registerMutation.mutate({ email, password, name });
+    registerMutation.mutate({ name, student_number: studentNumber, password });
   };
 
   return (
@@ -60,7 +65,7 @@ export function RegisterForm({
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create an account</CardTitle>
           <CardDescription>
-            Get started with your email and password
+            Get started with your student number and password
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,13 +84,13 @@ export function RegisterForm({
                   />
                 </div>
                 <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="student_number">Student Number</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    id="student_number"
+                    type="text"
+                    placeholder="2022119356"
+                    value={studentNumber}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStudentNumber(e.target.value)}
                     required
                   />
                 </div>

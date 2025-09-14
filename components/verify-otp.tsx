@@ -29,7 +29,7 @@ export function VerifyOtpForm({
   // Retrieve email from localStorage on component mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedEmail = localStorage.getItem('verificationEmail');
+      const storedEmail = localStorage.getItem('email');
       if (storedEmail) {
         setEmail(storedEmail);
       }
@@ -43,7 +43,7 @@ export function VerifyOtpForm({
     onSuccess: (data) => {
       console.log('Verification successful:', data);
       // Clear the stored email after successful verification
-      localStorage.removeItem('verificationEmail');
+      localStorage.removeItem('email');
       router.push('/auth/login'); //hmm need to put some message flash something
     },
     onError: (error: any) => {
