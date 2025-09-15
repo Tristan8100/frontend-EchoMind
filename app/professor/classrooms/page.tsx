@@ -31,6 +31,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
+import Link from "next/link"
 
 interface Professor {
   id: number
@@ -133,7 +134,8 @@ export default function ClassroomsPage() {
       <h1 className="text-2xl font-bold mb-6">My Classrooms</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {classrooms.map((classroom) => (
-          <Card key={classroom.id} className="overflow-hidden hover:shadow-lg transition">
+          <Link key={classroom.id} href={`/professor/classrooms/${classroom.id}`}>
+          <Card className="overflow-hidden hover:shadow-lg transition">
             <div className="relative w-full h-40">
               <Image
                 src={`${api2.defaults.baseURL}${classroom.image}`}
@@ -174,6 +176,7 @@ export default function ClassroomsPage() {
               </div>
             </CardContent>
           </Card>
+          </Link>
         ))}
       </div>
 

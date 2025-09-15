@@ -4,6 +4,7 @@ import "./globals.css";
 import QueryWrapper from '@/lib/query';
 import AuthProviderWrapper from "./authwrapper";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
       <QueryWrapper>
       <AuthProviderWrapper>
       {children}
+      <Toaster />
       </AuthProviderWrapper>
       </QueryWrapper>
       </ThemeProvider>
