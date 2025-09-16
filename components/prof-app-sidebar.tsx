@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/contexts/AuthContext"
 
 import Link from "next/link"
 
@@ -27,12 +28,12 @@ const studentNav = [
   },
   {
     title: "Profile",
-    url: "/student/profile",
+    url: "/professor/profile",
     icon: User,
   },
   {
     title: "Achived Courses",
-    url: "/archived",
+    url: "/professor/archived",
     icon: Archive,
   },
   {
@@ -43,6 +44,7 @@ const studentNav = [
 ]
 
 export function ProfAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth()
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader className="border-b border-border/50 pb-4">
@@ -94,7 +96,7 @@ export function ProfAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar
             </div>
             <div className="flex flex-col">
               <button className="flex items-center gap-1" onClick={() => console.log("logout")}>
-                <LogOut className="size-4" />
+                <LogOut className="size-4" onClick={logout} />
                 <span className="text-xs text-muted-foreground">Logout</span>
               </button>
             </div>

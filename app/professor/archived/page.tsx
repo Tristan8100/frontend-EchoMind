@@ -52,7 +52,6 @@ interface Classroom {
   students_count: number
   sentiment_analysis?: string
   status?: string
-  archived?: boolean // New property
 }
 
 export default function ClassroomsPage() {
@@ -72,7 +71,7 @@ export default function ClassroomsPage() {
 
   const fetchClassrooms = async () => {
     try {
-      const response = await api2.get("/api/classrooms")
+      const response = await api2.get("/api/classrooms-archived")
       setClassrooms(response.data)
     } catch (error) {
       console.error("Error fetching classrooms:", error)
@@ -138,17 +137,6 @@ export default function ClassroomsPage() {
     }
   }
 
-  const handleArchive = async (id: number) => {
-    try {
-      await api2.post(`/api/classrooms-archive/${id}`)
-      await fetchClassrooms()
-      toast.success("Classroom archived successfully.")
-    } catch (error) {
-      console.error("Error archiving classroom:", error)
-      toast.error("Failed to archive classroom.")
-    }
-  }
-  
   const handleActivate = async (id: number) => {
     try {
       await api2.post(`/api/classrooms-activate/${id}`)
@@ -168,7 +156,7 @@ export default function ClassroomsPage() {
           <Card
             key={classroom.id}
             className={`overflow-hidden transition-all duration-300 transform ${
-              classroom.archived
+              classroom.status === "archived"
                 ? "opacity-60 grayscale hover:scale-100"
                 : "hover:shadow-xl hover:scale-105"
             }`}
@@ -178,9 +166,11 @@ export default function ClassroomsPage() {
                 src={`${api2.defaults.baseURL}${classroom.image}`}
                 alt={classroom.name}
                 fill
-                className="object-cover"
+                className={`object-cover ${
+                  classroom.status === "archived" ? "grayscale" : ""
+                }`}
               />
-              {classroom.archived && (
+              {classroom.status === "archived" && (
                 <div className="absolute inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center">
                   <span className="text-white text-xl font-bold">ARCHIVED</span>
                 </div>
@@ -202,20 +192,28 @@ export default function ClassroomsPage() {
                 {classroom.status && <p>Status: {classroom.status}</p>}
               </div>
               <div className="flex gap-2 mt-4">
-                <Link href={`/professor/classrooms/${classroom.id}`} passHref>
-                  <Button size="sm" variant="secondary">
-                    View
-                  </Button>
-                </Link>
-                {classroom.archived ? (
-                  <Button
-                    size="sm"
-                    onClick={() => handleActivate(classroom.id)}
-                  >
-                    <RotateCcw className="h-4 w-4 mr-1" /> Activate
-                  </Button>
+                {classroom.status === "archived" ? (
+                  <>
+                    <Link href={`/professor/classrooms/${classroom.id}`} passHref>
+                      <Button size="sm" variant="secondary">
+                        View
+                      </Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      onClick={() => handleActivate(classroom.id)}
+                      className="w-full sm:w-auto"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" /> Remove from Archive
+                    </Button>
+                  </>
                 ) : (
                   <>
+                    <Link href={`/professor/classrooms/${classroom.id}`} passHref>
+                      <Button size="sm" variant="secondary">
+                        View
+                      </Button>
+                    </Link>
                     <Button size="sm" onClick={() => openEditDialog(classroom)}>
                       Edit
                     </Button>
@@ -226,11 +224,7 @@ export default function ClassroomsPage() {
                     >
                       Delete
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleArchive(classroom.id)}
-                    >
+                    <Button size="sm" variant="outline">
                       <Archive className="h-4 w-4 mr-1" /> Archive
                     </Button>
                   </>
@@ -240,7 +234,7 @@ export default function ClassroomsPage() {
           </Card>
         ))}
       </div>
-
+      
       {/* Edit Dialog */}
       <Dialog open={!!editingClassroom} onOpenChange={() => setEditingClassroom(null)}>
         <DialogContent>
