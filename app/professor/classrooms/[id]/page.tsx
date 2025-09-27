@@ -134,7 +134,7 @@ export default function ClassroomPage() {
           <div className="w-full h-64 relative">
             <img
               src={`${api2.defaults.baseURL}${classroom.image}`}
-              alt={`${classroom.name} classroom image`}
+              alt={`${classroom.image} classroom image`}
               className={`w-full h-full object-cover rounded-t-lg ${
                 classroom?.status === "archived" ? "grayscale" : ""
               }`}

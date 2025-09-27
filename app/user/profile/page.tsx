@@ -5,17 +5,15 @@ import { api2 } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import Image  from "next/image";
 
-interface Professor {
+interface Student {
   id: number;
   name: string;
   email: string;
-  image?: string;
 }
 
-export default function ProfilePage() {
-  const [professor, setProfessor] = useState<Professor | null>(null);
+export default function StudentProfilePage() {
+  const [student, setStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [name, setName] = useState("");
@@ -23,14 +21,13 @@ export default function ProfilePage() {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [photo, setPhoto] = useState<File | null>(null);
 
   useEffect(() => {
-    const fetchProfessor = async () => {
+    const fetchStudent = async () => {
       try {
         setLoading(true);
-        const res = await api2.get("/api/professor-settings");
-        setProfessor(res.data);
+        const res = await api2.get("/api/student-settings");
+        setStudent(res.data);
         setName(res.data.name);
         setEmail(res.data.email);
       } catch (err) {
@@ -40,16 +37,16 @@ export default function ProfilePage() {
       }
     };
 
-    fetchProfessor();
+    fetchStudent();
   }, []);
 
-  // Update info
-  const handleUpdateInfo = async () => {
-    if (!professor) return;
+  // Update name
+  const handleUpdateName = async () => {
+    if (!student) return;
     try {
       setUpdating(true);
-      await api2.patch("/api/professor-name", { name });
-      alert("Profile updated successfully!");
+      await api2.patch("/api/student-name", { name });
+      alert("Name updated successfully!");
     } catch (err: any) {
       alert(err.response?.data?.message || "Update failed");
     } finally {
@@ -59,10 +56,10 @@ export default function ProfilePage() {
 
   // Update password
   const handleUpdatePassword = async () => {
-    if (!professor) return;
+    if (!student) return;
     try {
       setUpdating(true);
-      await api2.patch("/api/professor-password", {
+      await api2.patch("/api/student-password", {
         old_password: password,
         password: newPassword,
         password_confirmation: passwordConfirm,
@@ -78,46 +75,11 @@ export default function ProfilePage() {
     }
   };
 
-  // Update photo
-  const handleUpdatePhoto = async () => {
-    if (!photo) return;
-    try {
-      setUpdating(true);
-      const formData = new FormData();
-      formData.append("image", photo);
-      const res = await api2.post("/api/professor-photo", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Photo updated successfully!");
-      setProfessor((prev) => prev ? { ...prev, image: res.data.image } : prev);
-      setPhoto(null);
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Photo update failed");
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  if (loading) return <p>Loading profile...</p>;
+  if (loading) return <p>Loading student profile...</p>;
 
   return (
     <div className="space-y-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold">Profile</h1>
-
-      {/* Profile Photo */}
-      <div className="flex items-center gap-4">
-        {professor?.image && (
-          <img
-            src={`${api2.defaults.baseURL}${professor.image}`}
-            alt="Profile"
-            className="w-20 h-20 rounded-full object-cover"
-          />
-        )}
-        <input type="file" onChange={(e) => setPhoto(e.target.files?.[0] || null)} />
-        <Button onClick={handleUpdatePhoto} disabled={!photo || updating}>
-          Update Photo
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold">Student Profile</h1>
 
       {/* Name & Email */}
       <div className="space-y-4">
@@ -129,8 +91,8 @@ export default function ProfilePage() {
           <Label>Email</Label>
           <Input value={email} readOnly className="bg-gray-100 cursor-not-allowed" />
         </div>
-        <Button onClick={handleUpdateInfo} disabled={updating}>
-          Update Info
+        <Button onClick={handleUpdateName} disabled={updating}>
+          Update Name
         </Button>
       </div>
 
@@ -138,15 +100,27 @@ export default function ProfilePage() {
       <div className="space-y-4">
         <div>
           <Label>Old Password</Label>
-          <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
         <div>
           <Label>New Password</Label>
-          <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          <Input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
         </div>
         <div>
           <Label>Confirm New Password</Label>
-          <Input type="password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
+          <Input
+            type="password"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+          />
         </div>
         <Button onClick={handleUpdatePassword} disabled={updating}>
           Update Password
