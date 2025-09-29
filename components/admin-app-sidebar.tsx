@@ -10,13 +10,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
 
 // Simple navigation for students
 const studentNav = [
   {
     title: "Dashboard",
-    url: "/student",
+    url: "/admin/dashboard",
     icon: Home,
+  },
+  {
+    title: "Manage Institures",
+    url: "/admin/institutes",
+    icon: User,
   },
   {
     title: "Manage Classrooms",
@@ -25,7 +31,7 @@ const studentNav = [
   },
   {
     title: "Manage Professors",
-    url: "/professors",
+    url: "/admin/professors",
     icon: User,
   },
   {
@@ -47,7 +53,7 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="hover:bg-accent/50 transition-colors">
-              <a href="/student">
+              <Link href="/student">
                 <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex aspect-square size-10 items-center justify-center rounded-xl shadow-sm">
                   <GraduationCap className="size-5" />
                 </div>
@@ -55,7 +61,7 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   <span className="font-semibold text-foreground">EchoMind AI</span>
                   <span className="text-xs text-muted-foreground font-medium">Admin Portal</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -71,12 +77,12 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
                     asChild 
                     className="h-11 px-3 hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-lg group"
                   >
-                    <a href={item.url} className="font-medium flex items-center gap-3">
+                    <Link href={item.url} className="font-medium flex items-center gap-3">
                       <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted/50 group-hover:bg-primary/10 transition-colors">
                         <Icon className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
                       </div>
                       <span className="text-sm">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )

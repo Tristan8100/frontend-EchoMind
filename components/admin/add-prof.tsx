@@ -8,13 +8,23 @@ import { Label } from "@/components/ui/label"
 import { UserPlus } from "lucide-react"
 import { api2 } from "@/lib/api"
 
+
 export default function AddProfessorDialog() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" })
+  const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  password: "",
+  institute_id: "",
+})
   const [otp, setOtp] = useState("")
   const [message, setMessage] = useState("")
   const [timer, setTimer] = useState(0)
+
+  const [institutes, setInstitutes] = useState<any[]>([])
+  const [selectedInstitute, setSelectedInstitute] = useState("")
+
 
   // countdown for resend
   useEffect(() => {
@@ -24,9 +34,27 @@ export default function AddProfessorDialog() {
     }
   }, [timer])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // newly added
+  useEffect(() => {
+    const fetchInstitutes = async () => {
+      try {
+        const res = await api2.get("/api/institutes")
+        setInstitutes(res.data.data)
+      } catch (err) {
+        console.error("Failed to fetch institutes", err)
+      }
+    }
+    fetchInstitutes()
+  }, [])
+
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
+
+  
 
   const handleRegister = async () => {
     try {
@@ -119,6 +147,22 @@ export default function AddProfessorDialog() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="institute_id">Institute</Label>
+              <select
+                id="institute_id"
+                value={formData.institute_id}
+                onChange={handleChange}
+                className="w-full border rounded-md p-2 bg-background text-foreground"
+              >
+                <option value="">Select an Institute</option>
+                {institutes.map((inst) => (
+                  <option key={inst.id} value={inst.id}>
+                    {inst.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
             {message && <p className="text-sm text-muted-foreground">{message}</p>}
             <DialogFooter>
               <Button type="button" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleRegister} disabled={loading}>
@@ -160,7 +204,7 @@ export default function AddProfessorDialog() {
             <DialogFooter>
               <Button onClick={() => {
                 setStep(1)
-                setFormData({ name: "", email: "", password: "" })
+                setFormData({ name: "", email: "", password: "", institute_id: "professor" })
                 setOtp("")
                 setMessage("")
               }}>
