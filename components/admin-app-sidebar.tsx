@@ -22,11 +22,6 @@ const studentNav = [
   {
     title: "Manage Institures",
     url: "/admin/institutes",
-    icon: User,
-  },
-  {
-    title: "Manage Classrooms",
-    url: "/student/classrooms",
     icon: BookOpen,
   },
   {
@@ -36,7 +31,7 @@ const studentNav = [
   },
   {
     title: "Manage Students",
-    url: "/students",
+    url: "/admin/students",
     icon: User,
   },
   {
