@@ -6,6 +6,7 @@ import { api2 } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 // Define types for your API response
 interface Student {
@@ -103,15 +104,17 @@ export default function StudentsPage() {
           {classrooms.length > 0 ? (
             classrooms.map((c) => (
               <Card key={c.id} className="hover:shadow-lg transition">
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg">{c.name}</h3>
-                  <p className="text-gray-500">{c.subject}</p>
-                  <p className="text-sm text-gray-600 mt-1">{c.description}</p>
-                  <div className="mt-3 text-sm">
-                    <span className="font-medium">Professor:</span>{" "}
-                    {c.professor.name} ({c.professor.email})
-                  </div>
-                </CardContent>
+                <Link href={`/admin/classrooms/${c.id}`}>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-lg">{c.name}</h3>
+                      <p className="text-gray-500">{c.subject}</p>
+                      <p className="text-sm text-gray-600 mt-1">{c.description}</p>
+                      <div className="mt-3 text-sm">
+                        <span className="font-medium">Professor:</span>{" "}
+                        {c.professor.name} ({c.professor.email})
+                      </div>
+                    </CardContent>
+                </Link>
               </Card>
             ))
           ) : (
