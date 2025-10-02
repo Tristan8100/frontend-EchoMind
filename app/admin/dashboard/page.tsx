@@ -145,25 +145,6 @@ export default function AdminDashboard() {
     fetchAdminData()
   }, [])
 
-  const handleExport = async () => {
-    try {
-      const response = await api2.get('/api/admin-export-report')
-      // Create downloadable file
-      const dataStr = JSON.stringify(response.data, null, 2)
-      const dataBlob = new Blob([dataStr], { type: 'application/json' })
-      const url = URL.createObjectURL(dataBlob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `admin-report-${new Date().toISOString().split('T')[0]}.json`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Export failed:', error)
-    }
-  }
-
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -191,13 +172,6 @@ export default function AdminDashboard() {
         </div>
         <div className="flex gap-2">
           <AddProfessorDialog />
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Report
-          </Button>
-          <Button onClick={() => router.refresh()}>
-            Refresh Data
-          </Button>
         </div>
       </div>
 

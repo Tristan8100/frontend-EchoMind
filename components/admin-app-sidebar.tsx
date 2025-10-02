@@ -36,7 +36,7 @@ const studentNav = [
   },
   {
     title: "Organization Analytics",
-    url: "/analytics",
+    url: "/admin/analytics",
     icon: BarChart3,
   }
 ]
