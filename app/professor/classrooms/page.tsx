@@ -1,9 +1,9 @@
-// app/classrooms/page.tsx
 "use client"
 
 import { useEffect, useState } from "react"
 import { api2 } from "@/lib/api"
 import Image from "next/image"
+import Link from "next/link"
 import {
   Card,
   CardHeader,
@@ -31,9 +31,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import Link from "next/link"
 import { toast } from "sonner"
-import { Archive, RotateCcw } from "lucide-react"
+import { Archive, RotateCcw, Loader2 } from "lucide-react"
 
 interface Professor {
   id: number
@@ -52,31 +51,38 @@ interface Classroom {
   students_count: number
   sentiment_analysis?: string
   status?: string
-  archived?: boolean // New property
+  archived?: boolean
 }
 
 export default function ClassroomsPage() {
   const [classrooms, setClassrooms] = useState<Classroom[]>([])
   const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null)
   const [deletingClassroom, setDeletingClassroom] = useState<Classroom | null>(null)
-  const [formData, setFormData] = useState<{
-    name: string
-    subject: string
-    description: string
-    image: File | null
-  }>({ name: "", subject: "", description: "", image: null })
+  const [loading, setLoading] = useState(false)
+  const [updating, setUpdating] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [fetching, setFetching] = useState(true)
+  const [formData, setFormData] = useState({
+    name: "",
+    subject: "",
+    description: "",
+    image: null as File | null,
+  })
 
   useEffect(() => {
     fetchClassrooms()
   }, [])
 
   const fetchClassrooms = async () => {
+    setFetching(true)
     try {
       const response = await api2.get("/api/classrooms")
       setClassrooms(response.data)
     } catch (error) {
       console.error("Error fetching classrooms:", error)
       toast.error("Failed to load classrooms.")
+    } finally {
+      setFetching(false)
     }
   }
 
@@ -103,42 +109,47 @@ export default function ClassroomsPage() {
 
   const handleUpdate = async () => {
     if (!editingClassroom) return
+    setUpdating(true)
     try {
       const form = new FormData()
       form.append("name", formData.name)
       form.append("subject", formData.subject)
       form.append("description", formData.description)
-      if (formData.image) {
-        form.append("image", formData.image)
-      }
+      if (formData.image) form.append("image", formData.image)
 
       await api2.post(`/api/classrooms-update/${editingClassroom.id}`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       })
 
       await fetchClassrooms()
-      setEditingClassroom(null)
       toast.success("Classroom updated successfully.")
+      setEditingClassroom(null)
     } catch (error) {
       console.error("Error updating classroom:", error)
       toast.error("Failed to update classroom.")
+    } finally {
+      setUpdating(false)
     }
   }
 
   const handleDelete = async () => {
     if (!deletingClassroom) return
+    setDeleting(true)
     try {
       await api2.delete(`/api/classrooms/${deletingClassroom.id}`)
       await fetchClassrooms()
-      setDeletingClassroom(null)
       toast.success("Classroom deleted successfully.")
+      setDeletingClassroom(null)
     } catch (error) {
       console.error("Error deleting classroom:", error)
       toast.error("Failed to delete classroom.")
+    } finally {
+      setDeleting(false)
     }
   }
 
   const handleArchive = async (id: number) => {
+    setLoading(true)
     try {
       await api2.post(`/api/classrooms-archive/${id}`)
       await fetchClassrooms()
@@ -146,10 +157,13 @@ export default function ClassroomsPage() {
     } catch (error) {
       console.error("Error archiving classroom:", error)
       toast.error("Failed to archive classroom.")
+    } finally {
+      setLoading(false)
     }
   }
-  
+
   const handleActivate = async (id: number) => {
+    setLoading(true)
     try {
       await api2.post(`/api/classrooms-activate/${id}`)
       await fetchClassrooms()
@@ -157,89 +171,123 @@ export default function ClassroomsPage() {
     } catch (error) {
       console.error("Error activating classroom:", error)
       toast.error("Failed to activate classroom.")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="p-6">
+    <div className="sm:p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">My Classrooms 📚</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {classrooms.map((classroom) => (
-          <Card
-            key={classroom.id}
-            className={`overflow-hidden transition-all duration-300 transform ${
-              classroom.archived
-                ? "opacity-60 grayscale hover:scale-100"
-                : "hover:shadow-xl hover:scale-105"
-            }`}
-          >
-            <div className="relative w-full h-40">
-              <Image
-                src={`${api2.defaults.baseURL}${classroom.image}`}
-                alt={classroom.name}
-                fill
-                className="object-cover"
+
+      {/* Loading skeleton */}
+      {fetching ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6)
+            .fill(0)
+            .map((_, i) => (
+              <div
+                key={i}
+                className="w-full h-64 bg-gray-200 animate-pulse rounded-xl"
               />
-              {classroom.archived && (
-                <div className="absolute inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">ARCHIVED</span>
-                </div>
-              )}
-            </div>
-
-            <CardHeader>
-              <CardTitle>{classroom.name}</CardTitle>
-              <CardDescription>{classroom.subject}</CardDescription>
-            </CardHeader>
-
-            <CardContent className="flex flex-col justify-between flex-grow">
-              <div className="space-y-1 text-sm text-gray-600">
-                <p>{classroom.description}</p>
-                <p className="font-medium mt-2">Code: {classroom.code}</p>
-                <p>Students: {classroom.students_count}</p>
-                <p>Professor: {classroom.professor?.name}</p>
-                {classroom.sentiment_analysis && <p>Sentiment: {classroom.sentiment_analysis}</p>}
-                {classroom.status && <p>Status: {classroom.status}</p>}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Link href={`/professor/classrooms/${classroom.id}`} passHref>
-                  <Button size="sm" variant="secondary">
-                    View
-                  </Button>
-                </Link>
-                {classroom.archived ? (
-                  <Button
-                    size="sm"
-                    onClick={() => handleActivate(classroom.id)}
-                  >
-                    <RotateCcw className="h-4 w-4 mr-1" /> Activate
-                  </Button>
-                ) : (
-                  <>
-                    <Button size="sm" onClick={() => openEditDialog(classroom)}>
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => setDeletingClassroom(classroom)}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleArchive(classroom.id)}
-                    >
-                      <Archive className="h-4 w-4 mr-1" /> Archive
-                    </Button>
-                  </>
+            ))}
+        </div>
+      ) : classrooms.length === 0 ? (
+        <p className="text-gray-600">No classrooms available.</p>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {classrooms.map((classroom) => (
+            <Card
+              key={classroom.id}
+              className={`overflow-hidden transition-all duration-300 transform flex flex-col justify-between ${
+                classroom.archived
+                  ? "opacity-60 grayscale hover:scale-100"
+                  : "hover:shadow-xl hover:scale-105"
+              }`}
+            >
+              <div className="relative w-full h-40">
+                <Image
+                  src={`${classroom.image}`}
+                  alt={classroom.name}
+                  fill
+                  className="object-cover"
+                />
+                {classroom.archived && (
+                  <div className="absolute inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center">
+                    <span className="text-white text-xl font-bold">ARCHIVED</span>
+                  </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
+              <CardHeader>
+                <CardTitle className="truncate">{classroom.name}</CardTitle>
+                <CardDescription>{classroom.subject}</CardDescription>
+              </CardHeader>
+
+              <CardContent className="flex flex-col justify-between flex-grow">
+                <div className="space-y-1 text-sm text-gray-600">
+                  <p className="line-clamp-2">{classroom.description}</p>
+                  <p className="font-medium mt-2">Code: {classroom.code}</p>
+                  <p>Students: {classroom.students_count}</p>
+                  <p>Professor: {classroom.professor?.name}</p>
+                  {classroom.sentiment_analysis && <p>Sentiment: {classroom.sentiment_analysis}</p>}
+                  {classroom.status && <p>Status: {classroom.status}</p>}
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Link href={`/professor/classrooms/${classroom.id}`} passHref>
+                    <Button size="sm" variant="secondary">
+                      View
+                    </Button>
+                  </Link>
+
+                  {classroom.archived ? (
+                    <Button
+                      size="sm"
+                      disabled={loading}
+                      onClick={() => handleActivate(classroom.id)}
+                    >
+                      {loading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                      )}
+                      Activate
+                    </Button>
+                  ) : (
+                    <>
+                      <Button size="sm" onClick={() => openEditDialog(classroom)}>
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setDeletingClassroom(classroom)}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={loading}
+                        onClick={() => handleArchive(classroom.id)}
+                        className="flex items-center"
+                      >
+                        {loading ? (
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        ) : (
+                          <Archive className="h-4 w-4 mr-1" />
+                        )}
+                        Archive
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={!!editingClassroom} onOpenChange={() => setEditingClassroom(null)}>
@@ -250,42 +298,22 @@ export default function ClassroomsPage() {
           <div className="space-y-3">
             <div>
               <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-              />
+              <Input id="name" name="name" value={formData.name} onChange={handleInputChange} />
             </div>
             <div>
               <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-              />
+              <Input id="subject" name="subject" value={formData.subject} onChange={handleInputChange} />
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-              />
+              <Input id="description" name="description" value={formData.description} onChange={handleInputChange} />
             </div>
             <div>
               <Label htmlFor="image">Image</Label>
               <Input id="image" type="file" accept="image/*" onChange={handleFileChange} />
               {editingClassroom?.image && (
                 <div className="relative w-full h-32 mt-2 rounded-md overflow-hidden">
-                  <Image
-                    src={`${api2.defaults.baseURL}${editingClassroom.image}`}
-                    alt="Preview"
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={`${editingClassroom.image}`} alt="Preview" fill className="object-cover" />
                 </div>
               )}
             </div>
@@ -294,10 +322,14 @@ export default function ClassroomsPage() {
             <Button variant="outline" onClick={() => setEditingClassroom(null)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdate}>Save Changes</Button>
+            <Button onClick={handleUpdate} disabled={updating}>
+              {updating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       {/* Delete Alert */}
       <AlertDialog open={!!deletingClassroom} onOpenChange={() => setDeletingClassroom(null)}>
         <AlertDialogContent>
@@ -305,13 +337,17 @@ export default function ClassroomsPage() {
             <AlertDialogTitle>Delete Classroom</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete{" "}
-              <span className="font-semibold">{deletingClassroom?.name}</span>?
-              This action cannot be undone.
+              <span className="font-semibold">{deletingClassroom?.name}</span>? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

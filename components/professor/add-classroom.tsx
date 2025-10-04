@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Plus } from "lucide-react"
+import { toast } from "sonner" // ✅ Import toast
 
 interface CreateClassroomDialogProps {
   onSuccess?: () => void
@@ -44,9 +45,17 @@ export function CreateClassroomDialog({ onSuccess }: CreateClassroomDialogProps)
       })
     },
     onSuccess: () => {
+      toast.success("🎉 Classroom created successfully!")
       setIsOpen(false)
       setFormData({ name: "", subject: "", description: "", image: null })
       if (onSuccess) onSuccess()
+    },
+    onError: (error: any) => {
+      console.error("Error creating classroom:", error)
+      const message =
+        error.response?.data?.message ||
+        "Failed to create classroom. Please try again."
+      toast.error(`❌ ${message}`)
     },
   })
 

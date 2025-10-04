@@ -28,7 +28,7 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
   const pathname = usePathname()
 
   return (
-    <Sidebar variant="floating" {...props}>
+    <Sidebar variant="inset" {...props}>
       {/* Header / Branding */}
       <SidebarHeader className="border-b border-border/50 pb-4">
         <SidebarMenu>
@@ -39,8 +39,8 @@ export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   <GraduationCap className="size-5" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold text-foreground">EchoMind AI</span>
-                  <span className="text-xs text-muted-foreground font-medium">Admin Portal</span>
+                  <span className="font-semibold">EchoMind AI</span>
+                  <span className="text-xs font-medium">Admin Portal</span>
                 </div>
               </Link>
             </SidebarMenuButton>

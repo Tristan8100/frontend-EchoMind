@@ -21,6 +21,7 @@ import { Star } from 'lucide-react';
 import { api2 } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 // --- Type Definitions ---
 interface StudentDetails {
@@ -132,12 +133,13 @@ export default function ClassroomPage() {
       >
         {classroom.image && (
           <div className="w-full h-64 relative">
-            <img
-              src={`${api2.defaults.baseURL}${classroom.image}`}
+            <Image
+              src={`${classroom.image}`}
               alt={`${classroom.image} classroom image`}
               className={`w-full h-full object-cover rounded-t-lg ${
                 classroom?.status === "archived" ? "grayscale" : ""
               }`}
+              fill
             />
             {classroom?.status === "archived" && (
               <div className="absolute top-2 right-2">

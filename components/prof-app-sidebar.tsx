@@ -41,7 +41,7 @@ export function ProfAppSidebar({
   const { logout } = useAuth();
 
   return (
-    <Sidebar variant="sidebar" {...props}>
+    <Sidebar variant="inset" {...props}>
       {/* Logo/Header */}
       <SidebarHeader className="border-b border-border/50 pb-4">
         <SidebarMenu>

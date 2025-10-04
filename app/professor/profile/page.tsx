@@ -107,10 +107,12 @@ export default function ProfilePage() {
       {/* Profile Photo */}
       <div className="flex items-center gap-4">
         {professor?.image && (
-          <img
-            src={`${api2.defaults.baseURL}${professor.image}`}
+          <Image
+            src={`${professor.image}`}
             alt="Profile"
             className="w-20 h-20 rounded-full object-cover"
+            width={80}
+            height={80}
           />
         )}
         <input type="file" onChange={(e) => setPhoto(e.target.files?.[0] || null)} />

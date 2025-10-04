@@ -89,7 +89,7 @@ export default function AdminProfessorPage() {
       <div className="mb-8 flex items-center gap-4">
        {professor.image ? (
         <Image
-            src={`${api2.defaults.baseURL}${professor.image}`}
+            src={`${professor.image}`}
             alt={professor.name}
             width={80}
             height={80}
@@ -169,7 +169,7 @@ export default function AdminProfessorPage() {
             >
               <div className="relative w-full h-40">
                 <Image
-                  src={`${api2.defaults.baseURL}${c.image}`}
+                  src={`${c.image}`}
                   alt={c.name}
                   fill
                   className="object-cover"

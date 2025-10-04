@@ -163,7 +163,7 @@ export default function ClassroomsPage() {
           >
             <div className="relative w-full h-40">
               <Image
-                src={`${api2.defaults.baseURL}${classroom.image}`}
+                src={`${classroom.image}`}
                 alt={classroom.name}
                 fill
                 className={`object-cover ${
