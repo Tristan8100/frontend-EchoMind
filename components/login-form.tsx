@@ -15,6 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const { login } = useAuth();
@@ -107,6 +108,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             </Button>
             {error && <div className="text-red-500 text-center text-sm mt-2">{error}</div>}
           </form>
+          <div className="text-center text-sm mt-4">
+            Forgot password?{" "}
+            <Link href="/forgot-password/send-reset-link" className="underline underline-offset-4">
+              Reset Password
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

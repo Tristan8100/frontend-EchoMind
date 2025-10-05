@@ -16,6 +16,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Link from "next/link";
 
 export function SendResetLinkForm({
   className,
@@ -30,7 +31,7 @@ export function SendResetLinkForm({
       api.post('/api/forgot-password', credentials).then(res => res.data),
     onSuccess: (data) => {
       console.log('Reset link sent successfully:', data);
-      localStorage.setItem('verificationEmail', email); // Store email for OTP verification
+      localStorage.setItem('email', email); // Store email for OTP verification
       router.push('/forgot-password/verify-otp');
     },
     onError: (error: any) => {
@@ -86,9 +87,9 @@ export function SendResetLinkForm({
               )}
               <div className="text-center text-sm">
                 Remember your password?{" "}
-                <a href="/login" className="underline underline-offset-4">
+                <Link href="/auth/login" className="underline underline-offset-4">
                   Sign in
-                </a>
+                </Link>
               </div>
             </div>
           </form>
