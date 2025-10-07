@@ -79,15 +79,70 @@ export default function StudentAnalyticsDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-40 w-full rounded-xl" />
+ if (loading) {
+  return (
+    <div className="space-y-6 p-6 animate-pulse">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start space-y-4 md:space-y-0">
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="w-full md:w-64 space-y-2">
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-3/4" />
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Stats */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="space-y-1">
+              <Skeleton className="h-4 w-24" />
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Skeleton className="h-7 w-16" />
+              <Skeleton className="h-3 w-32" />
+            </CardContent>
+          </Card>
         ))}
       </div>
-    );
-  }
+
+      {/* Chart and Feedback */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        {/* Pie Chart */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <Skeleton className="h-4 w-40" />
+          </CardHeader>
+          <CardContent className="flex items-center justify-center h-56">
+            <Skeleton className="h-32 w-32 rounded-full" />
+          </CardContent>
+        </Card>
+
+        {/* Feedback List */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <Skeleton className="h-4 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+
 
   if (!data) return <p className="text-red-500">Failed to load analytics data.</p>;
 

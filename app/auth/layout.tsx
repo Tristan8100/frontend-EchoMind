@@ -4,6 +4,7 @@ import { LoginForm } from "@/components/login-form";
 import LoginPageTrial from "@/components/trial/login";
 import { Car, GalleryVerticalEnd, GraduationCap } from "lucide-react"
 import { CarouselBasic } from '@/components/content';
+import Link from 'next/link';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   
@@ -23,12 +24,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
       {/* right: content */}
       <div className="relative hidden lg:flex h-full flex-col p-10 bg-card">
-        <div className="flex items-center gap-2 self-start font-semibold text-foreground">
+        <Link href="/" className="flex items-center gap-2 self-start font-semibold text-foreground">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <GraduationCap className="h-6 w-6 text-primary-foreground" />
           </div>
           <span className="text-lg font-bold">EchoMind AI</span>
-        </div>
+        </Link>
+
 
         <div className="flex flex-1 flex-col items-center justify-center text-center">
           <h1 className="text-4xl font-bold tracking-tight mb-4 text-foreground">

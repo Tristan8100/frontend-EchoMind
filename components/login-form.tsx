@@ -9,36 +9,27 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const router = useRouter();
 
-  const attemptAdminLogin = async (credentials: { email: string; password: string }) => {
-    try {
-      const res = await api.post("/api/admin-login", credentials);
-      login(res.data.admin_info, res.data.token);
-      router.push("/admin/dashboard");
-      console.log("Admin login successful");
-    } catch (err: any) {
-      attemptProfessorLogin({ email, password });
-    }
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const attemptProfessorLogin = async (credentials: { email: string; password: string }) => {
     try {
-      const res2 = await api.post("/api/professor-login", credentials);
-      login(res2.data.admin_info, res2.data.token);
+      const res = await api.post("/api/professor-login", credentials);
+      login(res.data.admin_info, res.data.token);
       router.push("/professor/dashboard");
       console.log("Professor login successful");
     } catch (err: any) {
@@ -48,6 +39,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       } else {
         setError("An unexpected error occurred.");
       }
+    }
+  };
+
+  const attemptAdminLogin = async (credentials: { email: string; password: string }) => {
+    try {
+      const res = await api.post("/api/admin-login", credentials);
+      login(res.data.admin_info, res.data.token);
+      router.push("/admin/dashboard");
+      console.log("Admin login successful");
+    } catch (err) {
+      await attemptProfessorLogin(credentials);
     }
   };
 
@@ -61,9 +63,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         console.log("User login successful");
       }
     },
-    onError: (err: any) => {
+    onError: async () => {
       console.warn("User login failed, attempting admin login...");
-      attemptAdminLogin({ email, password });
+      await attemptAdminLogin({ email, password });
     },
   });
 
@@ -72,6 +74,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     setError("");
     loginMutation.mutate({ email, password });
   };
+
+  const isLoading = loginMutation.isPending;
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -91,26 +95,59 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
+
             <div className="grid gap-3">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 transition"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
-            <Button type="submit" className="w-full">
-              Login
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
-            {error && <div className="text-red-500 text-center text-sm mt-2">{error}</div>}
+
+            {error && (
+              <div className="text-red-500 text-center text-sm mt-2">{error}</div>
+            )}
           </form>
+
           <div className="text-center text-sm mt-4">
             Forgot password?{" "}
-            <Link href="/forgot-password/send-reset-link" className="underline underline-offset-4">
+            <Link
+              href="/forgot-password/send-reset-link"
+              className="underline underline-offset-4"
+            >
               Reset Password
             </Link>
           </div>

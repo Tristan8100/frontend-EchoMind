@@ -212,7 +212,7 @@ export default function StudentClassrooms() {
                 {cls.sentiment && <p>Sentiment: {cls.sentiment}</p>}
 
                 <div className="flex flex-wrap gap-2 mt-4">
-                  <Link href={`/student/classrooms/${cls.id}`} passHref>
+                  <Link href={`/user/classrooms/${cls.id}`} passHref>
                     <Button size="sm" variant="secondary" className="flex-1">
                       View
                     </Button>
