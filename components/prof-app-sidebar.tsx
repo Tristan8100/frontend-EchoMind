@@ -51,7 +51,7 @@ export function ProfAppSidebar({
               asChild
               className="hover:bg-accent/50 transition-colors"
             >
-              <a href="/student">
+              <a href="/professor/dashboard">
                 <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex aspect-square size-10 items-center justify-center rounded-xl shadow-sm">
                   <GraduationCap className="size-5" />
                 </div>

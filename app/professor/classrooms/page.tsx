@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
 import { Archive, RotateCcw, Loader2 } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Professor {
   id: number
@@ -183,14 +184,26 @@ export default function ClassroomsPage() {
       {/* Loading skeleton */}
       {fetching ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array(6)
-            .fill(0)
-            .map((_, i) => (
-              <div
-                key={i}
-                className="w-full h-64 bg-gray-200 animate-pulse rounded-xl"
-              />
-            ))}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="overflow-hidden flex flex-col animate-in fade-in-50">
+              <div className="relative w-full h-40">
+                <Skeleton className="h-full w-full" />
+              </div>
+              <CardHeader className="space-y-2">
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-5/6" />
+                <Skeleton className="h-3 w-2/3" />
+                <div className="flex gap-2 mt-4">
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : classrooms.length === 0 ? (
         <p className="text-gray-600">No classrooms available.</p>

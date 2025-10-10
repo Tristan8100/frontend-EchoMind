@@ -34,6 +34,7 @@ import {
 import Link from "next/link"
 import { toast } from "sonner"
 import { Archive, RotateCcw } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Professor {
   id: number
@@ -58,6 +59,7 @@ export default function ClassroomsPage() {
   const [classrooms, setClassrooms] = useState<Classroom[]>([])
   const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null)
   const [deletingClassroom, setDeletingClassroom] = useState<Classroom | null>(null)
+  const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState<{
     name: string
     subject: string
@@ -71,11 +73,14 @@ export default function ClassroomsPage() {
 
   const fetchClassrooms = async () => {
     try {
+      setLoading(true)
       const response = await api2.get("/api/classrooms-archived")
       setClassrooms(response.data)
     } catch (error) {
       console.error("Error fetching classrooms:", error)
       toast.error("Failed to load classrooms.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -146,6 +151,35 @@ export default function ClassroomsPage() {
       console.error("Error activating classroom:", error)
       toast.error("Failed to activate classroom.")
     }
+  }
+
+   if (loading) {
+    return (
+      <div className="p-6 space-y-6 animate-in fade-in-50">
+        <Skeleton className="h-8 w-1/3" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="overflow-hidden">
+              <Skeleton className="h-40 w-full" />
+              <CardHeader>
+                <Skeleton className="h-5 w-2/3 mb-2" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-3 w-1/3" />
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-8 w-16 rounded-md" />
+                  <Skeleton className="h-8 w-24 rounded-md" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
