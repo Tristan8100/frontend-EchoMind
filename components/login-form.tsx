@@ -34,10 +34,23 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       console.log("Professor login successful");
     } catch (err: any) {
       console.error("login failed", err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
+
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+
+      if (status === 401) {
+        setError(status)
+      } else if (status === 403) {
+        api.post("/api/send-otp", { email })
+          .then((otpRes) => {
+            localStorage.setItem("email", email);
+            router.push("/auth/verify-otp");
+          })
+          .catch(() => {
+            setError("Failed to send OTP. Please try again later.");
+          });
       } else {
-        setError("An unexpected error occurred.");
+        setError(message || "An unexpected error occurred.");
       }
     }
   };
@@ -48,8 +61,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       login(res.data.admin_info, res.data.token);
       router.push("/admin/dashboard");
       console.log("Admin login successful");
-    } catch (err) {
-      await attemptProfessorLogin(credentials);
+    } catch (err : any) {
+      console.warn("User login failed, attempting professor login...");
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+
+      if (status === 401) {
+        await attemptProfessorLogin(credentials);
+      } else if (status === 403) {
+        api.post("/api/send-otp", { email })
+          .then((otpRes) => {
+            localStorage.setItem("email", email);
+            router.push("/auth/verify-otp");
+          })
+          .catch(() => {
+            setError("Failed to send OTP. Please try again later.");
+          });
+      } else {
+        setError(message || "An unexpected error occurred.");
+      }
     }
   };
 
@@ -63,9 +93,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         console.log("User login successful");
       }
     },
-    onError: async () => {
+    onError: async (err : any) => {
       console.warn("User login failed, attempting admin login...");
-      await attemptAdminLogin({ email, password });
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+
+      if (status === 401) {
+        attemptAdminLogin({ email, password });
+      } else if (status === 403) {
+        api.post("/api/send-otp", { email })
+          .then((otpRes) => {
+            localStorage.setItem("email", email);
+            router.push("/auth/verify-otp");
+          })
+          .catch(() => {
+            setError("Failed to send OTP. Please try again later.");
+          });
+      } else {
+        setError(message || "An unexpected error occurred.");
+      }
     },
   });
 
