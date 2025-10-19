@@ -1,5 +1,5 @@
 import * as React from "react"
-import { GraduationCap, Home, BookOpen, User, LogOut, BarChart3 } from 'lucide-react'
+import { GraduationCap, Home, BookOpen, User, LogOut, BarChart3, FormInput } from 'lucide-react'
 
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const adminNav = [
   { title: "Manage Professors", url: "/admin/professors", icon: User },
   { title: "Manage Students", url: "/admin/students", icon: User },
   { title: "Organization Analytics", url: "/admin/analytics", icon: BarChart3 },
+  { title: "Surveys", url: "/admin/surveys", icon: FormInput },
 ]
 
 export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
