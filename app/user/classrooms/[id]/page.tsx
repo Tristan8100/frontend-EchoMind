@@ -21,6 +21,7 @@ import { api2 } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface StudentDetails {
   id: number;
@@ -42,6 +43,7 @@ interface ClassroomData {
   code?: string;
   status?: string;
   students: ClassroomStudent[];
+  survey_id?: number;
 }
 
 export default function ClassroomPage() {
@@ -66,6 +68,7 @@ export default function ClassroomPage() {
     try {
       const res = await api2.get(`/api/get-classroom-data/${classroomId}`);
 
+      console.log(res.data);
       if (!res.data.classroom) {
         setFetchError('Classroom not found.');
         toast.error('Classroom not found.');
@@ -170,6 +173,11 @@ export default function ClassroomPage() {
           <p>
             <strong>Code:</strong> {classroom.code || 'N/A'}
           </p>
+          {classroom.survey_id && (
+            <Button>
+              <Link href={`/user/surveys/${params.id}`}>View Survey</Link>
+            </Button>
+          )}
         </CardContent>
       </Card>
 
