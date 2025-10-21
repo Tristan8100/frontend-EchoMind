@@ -4,14 +4,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api2 } from '@/lib/api';
 import { toast } from 'sonner';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -30,10 +27,17 @@ interface Survey {
   sections: Section[];
 }
 
+interface Professor {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface Classroom {
   id: number;
   name: string;
   survey_id?: number | null;
+  professor?: Professor;
 }
 
 export default function StudentSurveyPage() {
@@ -55,7 +59,6 @@ export default function StudentSurveyPage() {
     try {
       setLoading(true);
 
-      // Fetch classroom data
       const classroomRes = await api2.get(`/api/check-if-enrolled/${classroomId}`);
       setClassroom(classroomRes.data.classroom);
       console.log(classroomRes.data);
@@ -66,11 +69,9 @@ export default function StudentSurveyPage() {
         return;
       }
 
-      // Fetch survey questions
       const surveyRes = await api2.get(`/api/surveys/${surveyId}`);
       setSurvey(surveyRes.data);
 
-      // Fetch existing student responses
       const responseRes = await api2.get(`/api/survey-responses/${classroomId}`);
       const existingAnswers: Record<number, number> = {};
       responseRes.data.responses.forEach((r: any) => {
@@ -122,51 +123,93 @@ export default function StudentSurveyPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">Loading survey...</div>;
-  if (!survey) return <div className="p-8 text-center">No survey available.</div>;
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground">Loading survey...</div></div>;
+  if (!survey) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground">No survey available.</div></div>;
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Survey: {survey.title}</CardTitle>
-          <CardDescription>Please answer all questions honestly.</CardDescription>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {survey.sections.map((section) => (
-            <div key={section.id} className="space-y-4">
-              <h3 className="text-lg font-semibold">{section.title}</h3>
-              <div className="space-y-3">
-                {section.questions.map((q) => (
-                  <div key={q.id} className="space-y-1">
-                    <p className="text-sm">{q.question_text}</p>
-                    <div className="flex space-x-4">
-                      {[1, 2, 3, 4, 5].map((num) => (
-                        <label key={num} className="flex items-center space-x-1">
-                          <input
-                            type="radio"
-                            name={`question-${q.id}`}
-                            value={num}
-                            checked={answers[q.id] === num}
-                            onChange={() => handleAnswerChange(q.id, num)}
-                            className="accent-blue-600"
-                          />
-                          <span>{num}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+    <div className="min-h-screen bg-muted/30 py-8">
+      <div className="max-w-3xl mx-auto px-4 space-y-3">
+        <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+          <div className="h-3 bg-primary rounded-t-xl" />
+          <div className="p-8 space-y-2">
+            <h1 className="text-3xl font-normal text-foreground">{survey.title}</h1>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>Please answer all questions honestly.</p>
+              {classroom && (
+                <div className="pt-2 space-y-0.5">
+                  <p><span className="font-medium text-foreground">Classroom:</span> {classroom.name}</p>
+                  {classroom.professor && (
+                    <p><span className="font-medium text-foreground">Professor:</span> {classroom.professor.name}</p>
+                  )}
+                </div>
+              )}
             </div>
-          ))}
+          </div>
+        </div>
 
-          <Button onClick={handleSubmit} disabled={submitting} className="mt-4">
+        <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900">
+          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-sm text-blue-900 dark:text-blue-100">
+            <span className="font-medium">Rating Scale:</span> 1 (Lowest) to 5 (Highest)
+          </AlertDescription>
+        </Alert>
+
+        {survey.sections.map((section) => (
+          <div key={section.id} className="space-y-3">
+            {section.title && (
+              <div className="bg-card rounded-xl border border-border px-6 py-4 shadow-sm">
+                <h2 className="text-xl font-medium text-foreground">{section.title}</h2>
+              </div>
+            )}
+            
+            {section.questions.map((q) => (
+              <div key={q.id} className="bg-card rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-base font-normal text-foreground mb-5 leading-relaxed">{q.question_text}</p>
+                
+                <RadioGroup
+                  value={answers[q.id]?.toString()}
+                  onValueChange={(value) => handleAnswerChange(q.id, Number(value))}
+                >
+                  <div className="flex flex-wrap gap-6">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <div key={num} className="flex items-center space-x-2.5">
+                        <RadioGroupItem 
+                          value={num.toString()} 
+                          id={`q-${q.id}-${num}`}
+                          className="border-2"
+                        />
+                        <Label 
+                          htmlFor={`q-${q.id}-${num}`}
+                          className="text-sm font-medium cursor-pointer text-foreground hover:text-primary transition-colors"
+                        >
+                          {num}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <div className="bg-card rounded-xl border border-border p-6 flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-start sm:items-center shadow-sm">
+          <div className="text-sm">
+            <span className="text-muted-foreground">Completed: </span>
+            <span className="font-medium text-foreground">
+              {Object.keys(answers).length} / {survey.sections.reduce((sum, sec) => sum + sec.questions.length, 0)}
+            </span>
+          </div>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={submitting}
+            size="lg"
+            className="w-full sm:w-auto"
+          >
             {submitting ? 'Submitting...' : 'Submit Survey'}
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
