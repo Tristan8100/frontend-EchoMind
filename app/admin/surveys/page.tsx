@@ -43,6 +43,7 @@ export default function SurveysPage() {
   const [selected, setSelected] = useState<Survey | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Fetch surveys
   const fetchSurveys = async () => {
     try {
       setLoading(true);
@@ -60,6 +61,7 @@ export default function SurveysPage() {
     fetchSurveys();
   }, []);
 
+  // Create survey
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -71,12 +73,16 @@ export default function SurveysPage() {
       await fetchSurveys();
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Failed to create survey.");
+      const msg =
+        err?.response?.data?.message ||
+        "Failed to create survey.";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Update survey
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected) return;
@@ -88,12 +94,16 @@ export default function SurveysPage() {
       await fetchSurveys();
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Failed to update survey.");
+      const msg =
+        err?.response?.data?.message ||
+        "Failed to update survey.";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Delete survey
   const handleDelete = async () => {
     if (!selected) return;
     try {
@@ -107,10 +117,11 @@ export default function SurveysPage() {
     }
   };
 
-  if (loading) return <p>Loading surveys...</p>;
+  if (loading) return <p className="p-6 text-gray-500">Loading surveys...</p>;
 
   return (
     <div className="p-6 space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Surveys Management</h1>
 
@@ -123,6 +134,7 @@ export default function SurveysPage() {
             <DialogHeader>
               <DialogTitle>Create New Survey</DialogTitle>
             </DialogHeader>
+
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Title</label>
@@ -132,6 +144,7 @@ export default function SurveysPage() {
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <Textarea
@@ -141,21 +154,9 @@ export default function SurveysPage() {
                   }
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Status</label>
-                <Select
-                  value={form.status}
-                  onValueChange={(val) => setForm((f) => ({ ...f, status: val }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
+              <p className="text-xs text-gray-500 italic">Status will be set to pending by default.</p>
+
               <DialogFooter>
                 <Button type="submit" disabled={submitting}>
                   {submitting ? "Creating..." : "Create Survey"}
@@ -166,9 +167,9 @@ export default function SurveysPage() {
         </Dialog>
       </div>
 
-      {/* List */}
+      {/* Survey List */}
       {surveys.length === 0 ? (
-        <p>No surveys available.</p>
+        <p className="text-gray-600">No surveys available.</p>
       ) : (
         <ul className="space-y-2">
           {surveys.map((survey) => (
@@ -182,11 +183,24 @@ export default function SurveysPage() {
                   <p className="text-sm text-gray-600">{survey.description}</p>
                 )}
                 {survey.status && (
-                  <p className="text-xs text-gray-500 italic">
+                  <p
+                    className={`text-xs italic ${
+                      survey.status === "pending"
+                        ? "text-amber-600"
+                        : survey.status === "active"
+                        ? "text-green-600"
+                        : "text-gray-500"
+                    }`}
+                  >
                     Status: {survey.status}
                   </p>
                 )}
-                <Link href={`/admin/surveys/${survey.id}`}>View</Link>
+                <Link
+                  href={`/admin/surveys/${survey.id}`}
+                  className="text-blue-600 text-sm underline"
+                >
+                  View
+                </Link>
               </div>
 
               <div className="flex gap-2">
@@ -210,15 +224,15 @@ export default function SurveysPage() {
                       <Edit className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
+
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Edit Survey</DialogTitle>
                     </DialogHeader>
+
                     <form onSubmit={handleUpdate} className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Title
-                        </label>
+                        <label className="block text-sm font-medium mb-1">Title</label>
                         <Input
                           value={form.title}
                           onChange={(e) =>
@@ -227,10 +241,9 @@ export default function SurveysPage() {
                           required
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Description
-                        </label>
+                        <label className="block text-sm font-medium mb-1">Description</label>
                         <Textarea
                           value={form.description}
                           onChange={(e) =>
@@ -238,26 +251,23 @@ export default function SurveysPage() {
                           }
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Status
-                        </label>
+                        <label className="block text-sm font-medium mb-1">Status</label>
                         <Select
                           value={form.status}
-                          onValueChange={(val) =>
-                            setForm((f) => ({ ...f, status: val }))
-                          }
+                          onValueChange={(val) => setForm((f) => ({ ...f, status: val }))}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="active">Active</SelectItem>
                             <SelectItem value="archived">Archived</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+
                       <DialogFooter>
                         <Button type="submit" disabled={submitting}>
                           {submitting ? "Updating..." : "Update Survey"}
@@ -289,10 +299,7 @@ export default function SurveysPage() {
                       <span className="font-semibold">{survey.title}</span>?
                     </p>
                     <DialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenDelete(false)}
-                      >
+                      <Button variant="outline" onClick={() => setOpenDelete(false)}>
                         Cancel
                       </Button>
                       <Button variant="destructive" onClick={handleDelete}>
