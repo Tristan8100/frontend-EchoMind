@@ -7,9 +7,8 @@ import { CarouselBasic } from "@/components/content"
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="relative grid min-h-svh lg:grid-cols-2 bg-background text-foreground overflow-hidden">
-      {/* Decorative SVG backgrounds - Left side */}
+
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        {/* Large gradient circle - top left */}
         <svg className="absolute -top-32 -left-32 w-[600px] h-[600px] opacity-15" viewBox="0 0 600 600">
           <defs>
             <linearGradient id="auth-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -21,7 +20,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <circle cx="300" cy="300" r="280" fill="url(#auth-gradient-1)" />
         </svg>
 
-        {/* Medium gradient blob - bottom left */}
+
         <svg className="absolute -bottom-20 left-10 w-[400px] h-[400px] opacity-12" viewBox="0 0 400 400">
           <defs>
             <radialGradient id="auth-gradient-2">
@@ -32,7 +31,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <ellipse cx="200" cy="200" rx="180" ry="220" fill="url(#auth-gradient-2)" />
         </svg>
 
-        {/* Geometric pattern - scattered */}
         <svg className="absolute top-1/3 left-1/4 w-[120px] h-[120px] opacity-8" viewBox="0 0 120 120">
           <defs>
             <linearGradient id="auth-gradient-3" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -44,9 +42,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </svg>
       </div>
 
-      {/* Decorative SVG backgrounds - Right side */}
+      {/* right */}
       <div className="absolute top-0 right-0 w-1/2 h-full pointer-events-none overflow-hidden hidden lg:block">
-        {/* Large gradient circle - top right */}
+        {/* circle - top right */}
         <svg className="absolute -top-40 -right-40 w-[700px] h-[700px] opacity-10" viewBox="0 0 700 700">
           <defs>
             <linearGradient id="auth-gradient-4" x1="100%" y1="0%" x2="0%" y2="100%">
@@ -58,7 +56,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <circle cx="350" cy="350" r="320" fill="url(#auth-gradient-4)" />
         </svg>
 
-        {/* Floating shapes */}
+        {/* Floating shapes svgs */}
         <svg className="absolute top-1/4 right-1/4 w-[200px] h-[200px] opacity-8" viewBox="0 0 200 200">
           <defs>
             <linearGradient id="auth-gradient-5" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -69,7 +67,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <polygon points="100,20 180,180 20,180" fill="url(#auth-gradient-5)" />
         </svg>
 
-        {/* Bottom accent blob */}
+        {/* Bottom*/}
         <svg className="absolute bottom-10 right-20 w-[500px] h-[500px] opacity-12" viewBox="0 0 500 500">
           <defs>
             <radialGradient id="auth-gradient-6">
@@ -80,7 +78,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <ellipse cx="250" cy="250" rx="200" ry="240" fill="url(#auth-gradient-6)" transform="rotate(-25 250 250)" />
         </svg>
 
-        {/* Decorative grid pattern */}
+        {/*grid pattern */}
         <svg className="absolute top-1/2 right-1/3 w-[150px] h-[150px] opacity-6" viewBox="0 0 150 150">
           <defs>
             <pattern id="auth-grid" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">

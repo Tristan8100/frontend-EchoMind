@@ -14,7 +14,7 @@ import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePathname } from "next/navigation"
 
-// Admin navigation
+// Admin nav
 const adminNav = [
   { title: "Dashboard", url: "/admin/dashboard", icon: Home },
   { title: "Manage Institutes", url: "/admin/institutes", icon: BookOpen },

@@ -73,7 +73,7 @@ export function ChatInterfaceChats({ messages = [], id }: { messages?: any[], id
         <h2 className="font-semibold text-lg">Professor AI Chat</h2>
       </CardHeader>
 
-      {/* Scrollable message area */}
+      {/* Scrollable  */}
       <CardContent className="flex-1 p-0 overflow-hidden">
         <ScrollArea className="h-full px-4">
           <div className="space-y-4 pb-4">
@@ -84,7 +84,7 @@ export function ChatInterfaceChats({ messages = [], id }: { messages?: any[], id
                   message.sender === "professor" ? "flex-row-reverse text-right" : "flex-row"
                 }`}
               >
-                {/* Fallback initials instead of avatar */}
+                {/* Fallback  */}
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-xs font-bold">
                   {message.sender === "professor" ? "P" : "AI"}
                 </div>

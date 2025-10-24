@@ -18,7 +18,7 @@ export default function LandingPage() {
     e.preventDefault()
     setMobileMenuOpen(false)
 
-    // Wait for sheet to close before scrolling
+    // Wait
     setTimeout(() => {
       const element = document.getElementById(targetId)
       if (element) {
@@ -33,17 +33,9 @@ export default function LandingPage() {
       <header className="relative z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10">
-              <svg viewBox="0 0 40 40" fill="none" className="w-full h-full">
-                <rect width="40" height="40" rx="8" fill="currentColor" className="text-primary" />
-                <path
-                  d="M20 10L28 16V24L20 30L12 24V16L20 10Z"
-                  fill="currentColor"
-                  className="text-primary-foreground"
-                  opacity="0.9"
-                />
-                <circle cx="20" cy="20" r="4" fill="currentColor" className="text-primary-foreground" />
-              </svg>
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10">
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-transparent"></div>
+              <GraduationCap className="relative h-6 w-6 text-primary" />
             </div>
             <span className="text-xl font-semibold tracking-tight">EchoMind AI</span>
           </div>
